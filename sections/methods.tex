@@ -12,6 +12,7 @@
     We evaluated \texttt{gpt-oss-120b}, a 120-billion parameter model released in August 2025 by OpenAI, using the Inspect evaluation framework~\cite{ukaisecurity2024inspectai}. This LLM-based medication safety review configuration is referred to throughout as ``the System". The system prompt specified the task (identify medication safety issues requiring intervention), described the input format, and defined the expected output structure. It avoided specific methodological frameworks or examples. The complete system prompt is provided in Appendix~\ref{app:system-prompt}. The System operated without external knowledge sources such as  the BNF, NICE Guidelines, or PubMed. Each patient profile was converted to chronologically ordered markdown. The System generated structured outputs including binary intervention flag, probability score, identified issues with evidence, and proposed interventions.
 
 \subsection{Case Sampling Strategy}
+\label{sec:case-sampling}
 
     The evaluation considered patients across a spectrum of clinical complexity, defined by age, comorbidity burden (count QoF registers belonged to), number of active medications, and frequency of recent GP events. From a 200,000 patient test set, we selected 300 patients for expert review. Three sampling strategies were employed to achieve this coverage.
 
@@ -21,11 +22,12 @@
 
     To better understand System performance in less complex clinical scenarios and enable extrapolation to population level performance, an additional 100 patients were sampled from the indicator-negative population. The System was first applied to a larger indicator-negative sample, then 50 System-positive cases (flagged for intervention) and 50 System-negative cases (no intervention flagged) were randomly selected for clinician review.
 
-    This combined sampling approach yielded 300 patients. After excluding 23 cases with data quality issues, 277 patients remained for analysis. 
+    This combined sampling approach yielded 300 patients. \removed{After excluding 23 cases with data quality issues, 277 patients remained for analysis.} \added{Of the 300 sampled patients, 23 were not evaluable: 8 were excluded at the first review stage (4 with insufficient information to assess intervention necessity; 4 on a single agent only, not prioritisable for structured medication review), 11 were excluded after the clinician identified a suspected data error in the record (e.g. duplicate prescriptions reflecting stock or brand substitutions, missing prescription end dates, suspected coding errors, or care delivered outside the primary-care record), and 4 reviews could not be completed due to limitations of the evaluation application, leaving 277 patients for analysis. Operationally, ``sufficient information to assess intervention necessity'' required that the coded record allow the clinician to establish that a potential issue was current and actionable, rather than an artefact of missing or erroneous coding.}
     
     Given the role of prescribing safety indicators in case sampling, we separately analysed System performance against these criteria and clinician-indicator agreement rates; results are provided in Appendix~\ref{app:prescribing-safety-indicators}. Likewise, the subset of randomly sampled indicator-negative patients enables extrapolation to population-level performance estimates; results are provided in Appendix~\ref{app:population-performance-assessment}.
 
 \subsection{Clinician evaluation of patients}
+\label{sec:clinician-evaluation}
 
     All analysed cases underwent independent review by an experienced clinician with expertise in medication optimisation and safety. This clinician-evaluated design followed preliminary analysis demonstrating that ground truth cannot be reliably established from coded EHR data alone: medication change rates were nearly identical between structured medication reviews coded as identifying issues versus those coded as finding none (30.8\% vs 30.2\% within three months).
     
@@ -39,6 +41,8 @@
     
     \noindent
     The test cases were reviewed between October and November 2025.
+
+    \added{To evaluate inter-rater agreement with the reviews, we conducted 3 workshops with independent clinicians (6 clinical pharmacology physicians and 3 experienced secondary care pharmacists, all with experience of delivering medicines optimisation services). The 6 independent clinicians reviewed 43 actions across 21 of the failure mode cases. There was 97.7\% agreement with the actions taken (42/43). In one case 1/43 (2.32\%), there was disagreement in the medical team with a 3-way split across the physicians suggesting there is no clear certain action for that complex case. 4.7\% had additional actions proposed (2/43 actions). The 3 independent pharmacists reviewed 24 actions across 16 cases. There was 100\% agreement with the actions taken. In one case, 1/24 (4.2\%) they suggested one additional action. Notably, in 6/24 actions (25\%) across 5 cases, although in agreement, the pharmacists considered the proposed actions to be out of scope for pharmacist practice as they involved interrogation of appropriateness of the underlying diagnosis to reach decision.}
 
 \subsection{Three-Level Hierarchical Evaluation Framework}
 
@@ -70,7 +74,7 @@
 
     The methods so far relied on clinician evaluation of all 277 cases. Further insight relied on quantitative metrics across multiple models, complexity strata and repeated runs, which is not feasible manually.
 
-    We developed an automated scorer using the clinician's feedback on the 277 patients as ground truth. Clinician assessments were synthesised by \texttt{gpt-oss-120b} into lists of clinical issues and interventions. A separate LLM judge then assessed alignment between System outputs and this ground truth, producing an automated score ($S_{\text{automated}}$, range 0--1) combining $F_1$ scores for issue identification and intervention appropriateness. True negatives (both system and ground truth agree no issues exist) score 1.0; disagreements on issue presence score 0.0. Full specification is provided in Appendix~\ref{app:scoring}.
+    We developed an automated scorer using the clinician's feedback on the 277 patients as ground truth. Clinician assessments were synthesised by \texttt{gpt-oss-120b} into lists of clinical issues and interventions. A separate LLM judge then assessed alignment between System outputs and this ground truth, producing an automated score ($S_{\text{automated}}$, range 0--1) combining $F_1$ scores for issue identification and intervention appropriateness. True negatives (both system and ground truth agree no issues exist) score 1.0; disagreements on issue presence score 0.0. Full specification is provided in Appendix~\ref{app:scoring}. \added{The automated scorer was validated against the clinician's manual grades and a cross-family judge (Appendix~\ref{sec:scoring-design-considerations}).}
 
     $S_{\text{automated}}$ was used to assess model self-consistency, compare performance across models, and evaluate variation with stated patient ethnicity. Alternative scoring methods that weight false negatives more heavily than false positives could better reflect the asymmetric harm from missing genuine risks in any deployment.
 

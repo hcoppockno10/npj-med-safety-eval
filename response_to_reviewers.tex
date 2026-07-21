@@ -1,0 +1,308 @@
+\documentclass[11pt,a4paper]{article}
+
+% ------------------------------------------------------------------
+%  Response to Reviewers
+%  "A Real-World Evaluation of LLM Medication Safety Reviews in
+%   NHS Primary Care" — npj Digital Medicine
+% ------------------------------------------------------------------
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage[colorlinks=true,linkcolor=NavyBlue,urlcolor=NavyBlue,citecolor=NavyBlue]{hyperref}
+
+% Colours
+\definecolor{commentbg}{RGB}{245,245,245}
+\definecolor{commentrule}{RGB}{100,100,100}
+\definecolor{changebg}{RGB}{240,246,252}
+\definecolor{changerule}{RGB}{46,89,132}
+
+% --- Reviewer comment box -----------------------------------------
+\newcounter{rcomment}
+\newtcolorbox{reviewercomment}[1][]{%
+  breakable,
+  enhanced,
+  colback=commentbg,
+  colframe=commentrule,
+  boxrule=0pt,
+  leftrule=2.5pt,
+  arc=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  before upper={\itshape},
+  title={\normalfont\bfseries\color{commentrule!30!black}#1},
+  coltitle=commentrule!30!black,
+  attach title to upper={\par\smallskip},
+  fonttitle=\bfseries
+}
+
+% --- Manuscript change box ----------------------------------------
+\newtcolorbox{manuscriptchange}[1][]{%
+  breakable,
+  enhanced,
+  colback=changebg,
+  colframe=changerule,
+  boxrule=0pt,
+  leftrule=2.5pt,
+  arc=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fontupper=\small,
+  title={\normalfont\small\bfseries\color{changerule}#1},
+  coltitle=changerule,
+  attach title to upper={\par\smallskip}
+}
+
+\newcommand{\response}{\noindent\textbf{Response:}\ }
+
+\setlength{\parskip}{0.6em}
+
+\begin{document}
+
+% ==================================================================
+%  Header
+% ==================================================================
+\begin{center}
+  {\LARGE\bfseries Response to Reviewers}\\[0.8em]
+  {\large A Real-World Evaluation of LLM Medication Safety Reviews\\ in NHS Primary Care}\\[0.6em]
+  {\itshape npj Digital Medicine}\\[0.4em]
+  \today
+\end{center}
+
+\vspace{0.5em}
+\hrule
+\vspace{1.2em}
+
+Dear Editor,
+
+We thank you and both reviewers for the careful and constructive assessment of our manuscript. We have revised the manuscript in response to every comment; all changes are marked in red in the revised submission. In summary, the major revisions are:
+
+\begin{enumerate}[leftmargin=2em, itemsep=0.2em]
+  \item \textbf{Independent multidisciplinary clinician review.} A random selection of cases (27 cases, 10\%) was subsequently reviewed in three workshops by six clinical pharmacology physicians and three medicines optimisation pharmacists, confirming 97.7\% agreement with the proposed actions. This inter-rater assessment has been added to the main text and described in detail in Appendix~A.5.
+  \item \textbf{Validation of the automated scorer.} The automated scorer has been validated against the clinician's manual grades on the identical System outputs, with agreement reported at each level of the evaluation hierarchy, and additionally cross-checked with a judge from a different model family (\texttt{claude-haiku-4-5}). Results have been added to Appendix~B.2.4 and referenced from the main text.
+  \item \textbf{Reframing of the 46.9\% headline figure.} The abstract now states explicitly that this figure applies to the most high-complexity patients in the deliberately enriched evaluation sample.
+  \item \textbf{Tempering of the reasoning-versus-fine-tuning claim.} The interpretation has been revised to state only that, within the models evaluated, medical fine-tuning alone did not close the performance gap, and the confounding of scale, architecture and fine-tuning is now flagged explicitly as a limitation.
+  \item \textbf{Expanded discussion of the ``be decisive'' prompt design.} The discussion now makes this design decision, its rationale, and its likely contribution to overconfidence-related failures explicit.
+  \item \textbf{Explicit exclusion criteria.} The inclusion/exclusion criteria and a full breakdown of the 23 non-evaluable cases have been added to Appendix~A.4, with the corresponding correction in Appendix~E.
+\end{enumerate}
+
+These revisions directly address the key concerns raised in your decision letter --- validity risks from a single clinician reviewer, unvalidated automated scoring, the emphasis on the 46.9\% high-complexity accuracy figure, the overstated reasoning claim, and prompt-induced overconfidence shaping failure patterns. Point-by-point responses follow; reviewer comments are shown in grey boxes and quoted manuscript text in blue boxes.
+
+\vspace{0.5em}
+Yours sincerely,\\
+The Authors
+
+\vspace{1em}
+\hrule
+
+% ==================================================================
+%  Reviewer 1
+% ==================================================================
+\section*{Reviewer 1}
+
+\begin{reviewercomment}
+The authors evaluated an LLM medication safety system using real EHR data from 2.1 million adults in NHS Cheshire and Merseyside. Patient profiles were fed into gpt-oss-120b, which flagged safety issues and proposed interventions. A single clinician reviewed 277 cases through a three-level hierarchical framework: problem detection (is there a problem?), issue correctness (is it the right problem?), and intervention appropriateness (is the proposed action correct?) The failure taxonomy and the 45 vignettes illustrating these failures are the paper's strongest contribution.
+\end{reviewercomment}
+
+\response We thank the reviewer for this accurate summary and for recognising the failure taxonomy and vignettes as the paper's strongest contribution. We address each comment in turn below.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 1}
+\begin{reviewercomment}
+Validity needs the addition of a second clinician reviewer on a predefined subset and report inter-rater agreement.
+\end{reviewercomment}
+
+\response Thank you. We recognise this was a limitation. We subsequently performed independent review of a random sample of 27 of the 277 cases (10\%), conducted across three workshops with nine independent clinicians (six clinical pharmacology physicians and three experienced secondary care pharmacists). Agreement with the proposed actions was 97.7\%.
+
+The following has been inserted into the main text:
+
+\begin{manuscriptchange}[Main text (Overview of approach)]
+Subsequently, a random selection (27 cases/10\%) were reviewed separately by 6 clinical pharmacology clinicians and 3 medicines optimisation pharmacists, confirming 97.7\% agreement with proposed actions (see Appendix~A.5).
+\end{manuscriptchange}
+
+The following more detailed description of the workshops is now included in Appendix~A.5:
+
+\begin{manuscriptchange}[Appendix A.5 (Clinician evaluation of patients)]
+To evaluate inter-rater agreement with the reviews, we conducted 3 workshops with independent clinicians (6 clinical pharmacology physicians and 3 experienced secondary care pharmacists, all with experience of delivering medicines optimisation services). The 6 independent clinicians reviewed 43 actions across 21 of the failure mode cases. There was 97.7\% agreement with the actions taken (42/43). In one case 1/43 (2.32\%), there was disagreement in the medical team with a 3-way split across the physicians suggesting there is no clear certain action for that complex case. 4.7\% had additional actions proposed (2/43 actions). The 3 independent pharmacists reviewed 24 actions across 16 cases. There was 100\% agreement with the actions taken. In one case, 1/24 (4.2\%) they suggested one additional action. Notably, in 6/24 actions (25\%) across 5 cases, although in agreement, the pharmacists considered the proposed actions to be out of scope for pharmacist practice as they involved interrogation of appropriateness of the underlying diagnosis to reach decision.
+\end{manuscriptchange}
+
+The statement in Appendix~B.2.4 that inter-rater reliability was not formally assessed has also been updated to cross-reference these workshops.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 2}
+\begin{reviewercomment}
+Validate the automated scorer against clinician grades on the 277-case set, reporting agreement by level (L1/L2/L3) and any systematic mismatches.
+\end{reviewercomment}
+
+\response We have performed this validation on the 182 patients for which both grades exist (the 95 patients in the random indicator-negative sample were not automated-scored, as no answer key was constructed for them). Agreement by level of the evaluation hierarchy was:
+
+\begin{itemize}[leftmargin=2em, itemsep=0.1em]
+  \item \textbf{Patient-level issue correctness:} 96.2\% ($\kappa = 0.89$);
+  \item \textbf{Per-issue correctness:} 97.5\% ($\kappa = 0.90$; 323 issues);
+  \item \textbf{Intervention appropriateness:} 81.3\% ($\kappa = 0.62$), driven mainly by the 76 cases the clinician graded ``partially correct'', which have no clean binary mapping.
+\end{itemize}
+
+The systematic mismatches run in opposing directions --- the scorer is slightly lenient on issue precision but stricter on missed issues ($\kappa = 0.44$) --- and largely offset, with composite scores near-identical in mean (0.71 vs 0.72; Pearson $r = 0.76$). This validation has been added to Appendix~B.2.4 and is referenced from the main text; the full details, including a cross-family judge check, are given in our responses to Comments~11 and~12 below.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 3}
+\begin{reviewercomment}
+Reframe the 46.9\% headline in the abstract as applying to the enriched high-complexity evaluation sample.
+\end{reviewercomment}
+
+\response Thank you, this has been added. The abstract now reads:
+
+\begin{manuscriptchange}[Abstract]
+Although issue detection was strong, fully correct issue--intervention pairs occurred in only 46.9\% of \textbf{the most high-complexity} patients.
+\end{manuscriptchange}
+
+Please see also our response to Comment~9.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 4}
+\begin{reviewercomment}
+Would also temper the ``general reasoning vs fine-tuning'' claim given the parameter scale issue.
+\end{reviewercomment}
+
+\response We agree and have tempered this claim throughout; please see our full response to Comment~8, where the revised text is quoted.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 5}
+\begin{reviewercomment}
+More discussion of how the ``be decisive'' prompt constraint likely shapes the dominant failure mode and how results might change under a more realistic clinical-instruction setting.
+\end{reviewercomment}
+
+\response We agree and have expanded the discussion of this design decision; please see our full response to Comment~7, where the revised text is quoted.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 6a}
+\begin{reviewercomment}
+The evaluation rests on one clinician's judgement.
+\end{reviewercomment}
+
+\response This has been addressed through the independent clinician workshops and the inter-rater agreement now inserted into the manuscript; please see our response to Comment~1.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 6b}
+\begin{reviewercomment}
+The paper uses prescribing safety indicators (PINCER-derived SQL queries that flag known dangerous combinations, such as NSAID plus peptic ulcer or methotrexate without folic acid) as a sampling tool to identify complex patients for evaluation. These indicators were never fed to the LLM. But the clinician disagreed with them 30.1\% of the time, underscoring the need for clinician review and raising questions about how sensitive the conclusions are to evaluator subjectivity.
+\end{reviewercomment}
+
+\response Thank you. We believe this concern has also been addressed through the independent multidisciplinary clinician workshops: the 97.7\% agreement with the primary clinician's assessments across 27 randomly selected cases (Comment~1, Appendix~A.5) indicates that the conclusions are not driven by idiosyncratic evaluator judgement, even though meaningful variability exists between clinician judgement and rule-based indicators.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 7}
+\begin{reviewercomment}
+The system prompt explicitly instructed the model to be decisive, to avoid vague advice like ``consider reviewing'' or ``refer to a specialist,'' and to propose specific, actionable interventions. It seems unsurprising, then, that the most common failure mode was overconfidence and premature action. The paper acknowledges this in a single sentence about deliberate trade-offs. It needs more detail, as it directly affects how readers interpret the failure taxonomy.
+\end{reviewercomment}
+
+\response We agree and have expanded the discussion to make this design decision more explicit. The study intentionally evaluated the model in a deployment-oriented setting where it was required to propose concrete clinical actions rather than defaulting to generic advice (e.g.\ ``seek specialist review''). This requirement was the product of significant prompt iteration and reflects a deliberate balance: without it, the model deferred on every case, recommending only that the patient seek medical advice, and produced no evaluable interventions. This increases the opportunity for unsafe recommendations and therefore likely contributed to the predominance of overconfidence-related failures. However, we believe this reflects an important and realistic evaluation scenario because medication review systems that merely recommend further review have limited clinical utility. We have also added the results of independent multidisciplinary clinician workshops demonstrating high agreement that the identified failures represented genuine clinical concerns, supporting the validity of the reported taxonomy rather than reflecting idiosyncratic judgement.
+
+The following additional detail has been added to the manuscript (the pre-existing limitation that single-pass inference precluded information-gathering that agentic tool calling might enable has been retained):
+
+\begin{manuscriptchange}[Main text (Discussion, design trade-offs)]
+The prompt intentionally required the System to propose specific clinical actions rather than generic recommendations (Appendix~D), reflecting the intended use of medication optimisation systems. This instruction was the product of significant prompt iteration and reflects a deliberate balance: without it, the System deferred on every case, recommending only that the patient seek medical advice, and produced no evaluable interventions. This design favoured decisiveness over uncertainty calibration and likely increased overconfidence-related failures. We consider this an appropriate evaluation because clinically useful systems must recommend actions. Additionally, single-pass inference precluded information-gathering that agentic tool calling might enable. Resource constraints---limited time before data access expiry, computational limits within the secure data-analytic environment, and restricted clinician access---prevented further iterative refinement, however, subsequent independent, multidisciplinary clinician case review showed high agreement with the primary evaluation, supporting the validity of the failure taxonomy (Appendix~A.5).
+\end{manuscriptchange}
+
+% ------------------------------------------------------------------
+\subsection*{Comment 8}
+\begin{reviewercomment}
+The claim that general reasoning capacity matters more than medical fine-tuning is suggestive but overstated. The gemma models are roughly a quarter the size of gpt-oss-120b, and medgemma did improve over base gemma. A fine-tuned model at a comparable scale would be needed to substantiate this claim. Recommend tempering it or flagging it explicitly as a limitation.
+\end{reviewercomment}
+
+\response We agree and have tempered this interpretation. Our comparison cannot disentangle the effects of model scale, architecture and medical fine-tuning because no medically fine-tuned model at the scale of \texttt{gpt-oss-120b} was available. We have therefore revised the text to state that, within the models evaluated, medical fine-tuning alone did not close the performance gap, and we explicitly acknowledge this limitation.
+
+The results text now reads:
+
+\begin{manuscriptchange}[Main text (Results)]
+\ldots suggesting that, within the models evaluated, medical fine-tuning alone did not close the performance gap for this real-world medication review task. However, because model architecture, parameter count and fine-tuning differed simultaneously, these comparisons cannot isolate the relative contributions of general reasoning capacity and domain-specific medical fine-tuning. This may boost performance on synthetic benchmarks but appears insufficient to close the gap in complex real-world cases.
+\end{manuscriptchange}
+
+And the following has been added to the limitations:
+
+\begin{manuscriptchange}[Main text (Discussion, limitations)]
+Our model comparisons were observational rather than controlled; because no medically fine-tuned model comparable in architecture and scale to \texttt{gpt-oss-120b} was available, we could not independently assess the effect of medical fine-tuning.
+\end{manuscriptchange}
+
+% ------------------------------------------------------------------
+\subsection*{Comment 9}
+\begin{reviewercomment}
+The abstract states that fully correct issue--intervention pairs occurred in only 46.9\% of patients. The abstract must explicitly state that this figure comes from a sample deliberately enriched for high clinical complexity. By contrast, the unselected population extrapolation yielded an overall accuracy of 95.5\%. Presenting the 46.9\% figure in isolation is misleading.
+\end{reviewercomment}
+
+\response Thank you, we agree and have added clarification in the abstract that this figure applies to the high-complexity subset; the revised abstract text is quoted in our response to Comment~3.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 10}
+\begin{reviewercomment}
+Would be great to know the explicit inclusion/exclusion criteria for the 23 cases dropped due to ``data quality issues,'' and what amount of information would have been needed ``to assess intervention necessity''.
+\end{reviewercomment}
+
+\response Thank you, we have made these explicit. Of the 300 sampled patients, 23 were not evaluable. Eight were excluded at the first review stage: 4 with insufficient information to assess intervention necessity (no recorded clinical events or no current regular medicines) and 4 on a single agent only, not prioritisable for structured medication review. Eleven were excluded after the clinician identified a suspected data error in the record --- duplicate prescriptions reflecting stock or brand substitutions, missing prescription end dates producing implausible durations, suspected coding errors, or care delivered outside the primary-care record. The remaining 4 reviews could not be completed due to limitations of the evaluation application. Operationally, ``sufficient information to assess intervention necessity'' required that the coded record allow the clinician to establish that a potential issue was current and actionable, rather than an artefact of missing or erroneous coding.
+
+These criteria and the breakdown have been added to Appendix~A.4:
+
+\begin{manuscriptchange}[Appendix A.4 (Case Sampling Strategy)]
+Of the 300 sampled patients, 23 were not evaluable: 8 were excluded at the first review stage (4 with insufficient information to assess intervention necessity; 4 on a single agent only, not prioritisable for structured medication review), 11 were excluded after the clinician identified a suspected data error in the record (e.g.\ duplicate prescriptions reflecting stock or brand substitutions, missing prescription end dates, suspected coding errors, or care delivered outside the primary-care record), and 4 reviews could not be completed due to limitations of the evaluation application, leaving 277 patients for analysis. Operationally, ``sufficient information to assess intervention necessity'' required that the coded record allow the clinician to establish that a potential issue was current and actionable, rather than an artefact of missing or erroneous coding.
+\end{manuscriptchange}
+
+We have also corrected the corresponding description of the evaluation application (Appendix~E), which previously attributed all 23 exclusions to the first review screen: Screen~1 identified 8 exclusions, 11 were flagged at Screen~2, and 4 reviews were not completed.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 11}
+\begin{reviewercomment}
+The automated scorer needs more validation. The clinician graded the primary 277 cases by hand, but the authors also needed to compare six model configurations across 10 runs each, which isn't feasible manually. So, they built an automated pipeline: gpt-oss-120b synthesized the clinician's feedback into a structured answer key (lists of correct issues and interventions per patient), and then a separate LLM judge scored how well each model run aligned with that answer key. Two concerns arise. The model that generated the answer key is from the same family as the primary system being evaluated, which could introduce systematic bias in how clinician feedback is interpreted.
+\end{reviewercomment}
+
+\response This concern is bounded in three ways. First, the pipeline decomposes scoring into narrow subtasks --- restructuring the clinician's feedback into lists (the prompt forbids adding issues or interventions not present in her feedback), then semantically matching each System issue and intervention against them --- leaving little scope for family-specific interpretation. Second, the validation in our response to Comment~12 tests synthesis and judging end-to-end against the clinician's grades; a systematically misinterpreted answer key could not produce the issue-level agreement observed there. Third, re-running the judge with a different model family (\texttt{claude-haiku-4-5}), holding all else fixed, reproduced the clinician's grades at least as well as the \texttt{gpt-oss-120b} judge (per-issue agreement 99.4\% vs 97.5\%, $\kappa = 0.98$ vs 0.90; intervention appropriateness 81.9\% vs 81.3\%; composite $r = 0.80$ vs 0.76), with the two judges near-identical ($r = 0.92$; means within 0.005). Fidelity to the clinician is therefore likely not an artefact of the scoring model's identity. The scorer supports only the secondary multi-model comparison; all primary results rest on the clinician's grades.
+
+One residual subtlety: the answer key's coverage is anchored to the outputs the clinician reviewed, so a model surfacing a valid issue absent from the key may be under-credited. The key does include the issues the clinician flagged as missed, matching is semantic rather than literal, and within-model comparisons (reasoning effort; \texttt{gpt-oss-120b} vs \texttt{20b}) share this anchoring equally. The most exposed comparison --- \texttt{gemma} vs \texttt{gpt-oss} --- is already interpreted cautiously in our response to Comment~8. This limitation is now acknowledged in Appendix~B.2.4 (quoted in our response to Comment~12).
+
+% ------------------------------------------------------------------
+\subsection*{Comment 12}
+\begin{reviewercomment}
+The paper doesn't report whether the automated scorer was validated against the clinician's grades for the 277 cases where both are available. If the two agree closely, the multi-model comparison is trustworthy. If they diverge, the entire model comparison section (Figure 1e, the reasoning effort findings, the gemma vs gpt-oss results) is on uncertain ground. Reporting this correlation is straightforward and would resolve the question.
+\end{reviewercomment}
+
+\response We have performed this validation. Both grades exist for 182 patients (the 95 patients in the random indicator-negative sample were not automated-scored, as no answer key was constructed for them). Agreement was 97.5\% per-issue ($\kappa = 0.90$; 323 issues), 96.2\% for patient-level issue correctness ($\kappa = 0.89$), and 81.3\% for intervention appropriateness ($\kappa = 0.62$) --- the latter driven mainly by the 76 cases the clinician graded ``partially correct'', which have no clean binary mapping. Composite scores were near-identical in mean (0.71 vs 0.72; $r = 0.76$). Mismatches run in opposing directions --- the scorer is slightly lenient on issue precision but stricter on missed issues ($\kappa = 0.44$) --- and largely offset. As the between-model differences in Figure~1e (0.459 vs 0.334 vs 0.196--0.239) are large relative to this discrepancy, we are confident the multi-model comparison rests on a scorer that closely tracks expert judgement.
+
+This validation has been added to Appendix~B.2.4:
+
+\begin{manuscriptchange}[Appendix B.2.4 (Design Considerations)]
+We validated the automated scorer against the clinician's manual grades on the identical System outputs ($n = 182$ evaluable patients with an answer key). Agreement was 97.5\% per-issue ($\kappa = 0.90$; 323 issues), 96.2\% for patient-level issue correctness ($\kappa = 0.89$), and 81.3\% for intervention appropriateness ($\kappa = 0.62$), with composite scores near-identical in mean (0.71 vs 0.72; Pearson $r = 0.76$). The scorer was slightly more lenient than the clinician on issue precision and stricter on missed issues; these biases largely offset. Re-running the judge with a model from a different family (\texttt{claude-haiku-4-5}) reproduced the clinician's grades at least as well (per-issue $\kappa = 0.98$; composite $r = 0.80$), with the two judges strongly correlated ($r = 0.92$). As the answer key is anchored to the outputs the clinician reviewed, models surfacing valid issues absent from the key may be under-credited; within-model comparisons are unaffected, and cross-family comparisons should be interpreted with this in mind.
+\end{manuscriptchange}
+
+The validation is now also referenced where the multi-model comparison is presented and described:
+
+\begin{manuscriptchange}[Main text (Results)]
+The automated scorer underpinning these comparisons was validated against the clinician's manual grades (per-issue agreement 97.5\%, $\kappa = 0.90$; see Appendix~B.2.4).
+\end{manuscriptchange}
+
+\begin{manuscriptchange}[Appendix A.9 (Automated scoring)]
+The automated scorer was validated against the clinician's manual grades and a cross-family judge (Appendix~B.2.4).
+\end{manuscriptchange}
+
+\vspace{1em}
+\hrule
+
+% ==================================================================
+%  Reviewer 2
+% ==================================================================
+\section*{Reviewer 2}
+
+\begin{reviewercomment}
+This is a timely and important work given the rapid adoption of LLM based tools in healthcare. Additionally, as the authors state, analyses using real world data are absent from the literature.
+\end{reviewercomment}
+
+\response We thank the reviewer for this positive assessment of the work's timeliness and importance.
+
+% ------------------------------------------------------------------
+\subsection*{Comment 1}
+\begin{reviewercomment}
+I can't be certain from what I received, but it appears this is being submitted as a brief report rather than a full research article. If that is the case, I would highly recommend removing some content (perhaps the vignettes?) in order to better elucidate the methods.
+\end{reviewercomment}
+
+\response We thank the reviewer for this helpful suggestion. We carefully considered removing the illustrative vignettes to create additional space; however, we concluded that they are integral to communicating the nature of the observed failure modes and underpinning the proposed failure taxonomy. We note that Reviewer~1 explicitly identified the failure taxonomy and the vignettes illustrating these failures as the paper's strongest contribution, and that the vignettes are housed in the appendix (Appendix~C) rather than the main text, so retaining them does not come at the expense of the methods description. We have nonetheless expanded the methods material in response to Reviewer~1's comments, including explicit exclusion criteria (Appendix~A.4), a detailed account of the inter-rater agreement workshops (Appendix~A.5), and a full validation of the automated scorer (Appendix~B.2.4).
+
+\end{document}
