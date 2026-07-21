@@ -1,0 +1,117 @@
+\label{app:scoring}
+
+This appendix provides full specification of the scoring methodologies used for clinician evaluation (Section~\ref{sec:scoring-clinician}) and automated evaluation (Section~\ref{sec:scoring-automated}).
+
+\subsection{Clinician Composite Score}
+\label{sec:scoring-clinician}
+
+The clinician evaluated each case across multiple dimensions but did not provide an overall score. To enable quantitative analysis, we calculated a composite score ($S_{\text{clinician}}$, range 0--1) combining issue identification accuracy and intervention appropriateness.
+
+\subsubsection{Issue Identification}
+
+Issue identification was assessed using precision and recall:
+
+\begin{equation}
+    P_{\text{issue}} = \frac{|\text{correct issues identified by System}|}{|\text{total issues identified by System}|}
+\end{equation}
+
+Recall was assessed categorically based on clinician judgment of missed issues:
+
+\begin{equation}
+    R_{\text{issue}} = \begin{cases}
+        1.0 & \text{no missed issues} \\
+        0.5 & \text{missed issues, but some correct issues identified} \\
+        0.0 & \text{missed issues, no correct issues identified}
+    \end{cases}
+\end{equation}
+
+These were combined into an $F_1$ score:
+
+\begin{equation}
+    F_{1,\text{issue}} = \frac{2 \cdot P_{\text{issue}} \cdot R_{\text{issue}}}{P_{\text{issue}} + R_{\text{issue}}}
+\end{equation}
+
+\subsubsection{Intervention Appropriateness}
+
+Intervention appropriateness was scored categorically:
+
+\begin{equation}
+    S_{\text{intervention}} = \begin{cases}
+        1.0 & \text{intervention fully correct} \\
+        0.5 & \text{intervention partially correct} \\
+        0.0 & \text{intervention incorrect or missing when needed}
+    \end{cases}
+\end{equation}
+
+\subsubsection{Composite Score}
+
+The final clinician composite score averages issue identification and intervention appropriateness:
+
+\begin{equation}
+    S_{\text{clinician}} = \begin{cases}
+        \frac{1}{2}(F_{1,\text{issue}} + S_{\text{intervention}}) & \text{if } F_{1,\text{issue}} \text{ is defined (i.e., issues were identified)} \\[0.5em]
+        S_{\text{intervention}} & \text{otherwise (true negative cases)}
+    \end{cases}
+\end{equation}
+
+The partial credit value (0.5) for both recall and intervention appropriateness reflects clinical judgment that partially correct outputs retain meaningful utility---a recommendation that identifies some but not all issues, or proposes a reasonable but suboptimal intervention, is more valuable than a completely incorrect assessment while still falling short of full clinical acceptability.
+
+\subsection{Automated Scorer}
+\label{sec:scoring-automated}
+
+For scalable evaluation across multiple models and repeated runs, we developed an automated scorer using clinician feedback as ground truth.
+
+\subsubsection{Ground Truth Establishment}
+
+Clinician feedback on the 277 evaluated patients was synthesised into structured ground truth using \texttt{gpt-oss-120b}. For each patient, this produced:
+\begin{itemize}
+    \item A validated list of clinical issues requiring intervention (or confirmation that no issues existed)
+    \item A validated list of appropriate interventions
+\end{itemize}
+
+\subsubsection{Automated Scoring Process}
+
+For each System evaluation, a separate LLM judge assessed alignment with the ground truth. The judge determined:
+\begin{itemize}
+    \item Which System-identified issues matched ground truth issues
+    \item Which ground truth issues were missed by the System
+    \item Which System-proposed interventions matched ground truth interventions
+\end{itemize}
+
+\subsubsection{Score Calculation}
+
+Precision and recall were calculated for both issues and interventions:
+
+\begin{align}
+    P_{\text{issue}} &= \frac{|\text{System issues matching ground truth}|}{|\text{total System issues}|}\\[0.5em]
+    R_{\text{issue}} &= \frac{|\text{ground truth issues matched by System}|}{|\text{total ground truth issues}|}\\[0.5em]
+    P_{\text{intervention}} &= \frac{|\text{System interventions matching ground truth}|}{|\text{total System interventions}|}\\[0.5em]
+    R_{\text{intervention}} &= \frac{|\text{ground truth interventions matched by System}|}{|\text{total ground truth interventions}|}
+\end{align}
+
+These were combined into $F_1$ scores:
+
+\begin{align}
+    F_{1,\text{issue}} &= \frac{2 \cdot P_{\text{issue}} \cdot R_{\text{issue}}}{P_{\text{issue}} + R_{\text{issue}}}\\[0.5em]
+    F_{1,\text{intervention}} &= \frac{2 \cdot P_{\text{intervention}} \cdot R_{\text{intervention}}}{P_{\text{intervention}} + R_{\text{intervention}}}
+\end{align}
+
+The final automated score handles three cases:
+
+\begin{equation}
+    S_{\text{automated}} = \begin{cases}
+        1.0 & \text{true negative} \\[0.5em]
+        0.0 & \text{false positive or false negative} \\[0.5em]
+        \frac{1}{2}(F_{1,\text{issue}} + F_{1,\text{intervention}}) & \text{both flagged issues (evaluate quality)}
+    \end{cases}
+\end{equation}
+
+\subsubsection{Design Considerations}
+
+The automated scorer was designed for research use to enable comparison across models and configurations. Several design choices reflect this context:
+
+\textbf{Equal weighting of false positives and false negatives.} The scorer assigns 0.0 to both false positives (System flags issue, ground truth has none) and false negatives (System misses issue in ground truth). For deployment contexts, asymmetric weighting could prioritise sensitivity, reflecting the greater harm from missing genuine medication safety risks compared to flagging cases that prove acceptable on review.
+
+\textbf{LLM-as-judge limitations.} Using an LLM to assess alignment between System outputs and ground truth introduces potential for systematic bias, particularly for edge cases where clinical judgment is required. The scorer was validated against a subset of manually-scored cases to ensure reasonable alignment, but should not be interpreted as equivalent to expert clinician evaluation.
+
+\textbf{Ground truth constraints.} The ground truth reflects a single expert clinician's assessment. Inter-rater reliability was not formally assessed due to resource constraints within the Trusted Research Environment. The 30.1\% disagreement rate between clinician assessment and validated prescribing safety indicators (Appendix~\ref{app:prescribing-safety-indicators}) suggests meaningful variability exists even among expert judgments.

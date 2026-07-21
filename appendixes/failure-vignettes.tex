@@ -1,0 +1,149 @@
+\label{app:failure-vignettes}
+{\scriptsize
+            \begin{longtable}{p{0.03\textwidth}p{0.19\textwidth}p{0.37\textwidth}p{0.37\textwidth}}
+                \caption{45 detailed pseudonymised patient vignettes illustrating each failure mode, including patient context, system recommendations, and clinician commentary.}
+
+                \label{tab:overconfidence-examples} \\
+                % \caption{tab:vignettes}
+                \toprule
+                \textbf{ID} & \textbf{Failure Reason / Mode} & \textbf{Patient Context} & \textbf{System Intervention and How to Improve} \\
+                \midrule
+                \endfirsthead
+            
+                \multicolumn{4}{c}{\tablename\ \thetable{} -- continued from previous page} \\
+                \toprule
+                \textbf{ID} & \textbf{Failure Reason / Mode} & \textbf{Patient Context} & \textbf{System Intervention and How to Improve} \\
+                \midrule
+                \endhead
+            
+                \midrule
+                \multicolumn{4}{r}{Continued on next page} \\
+                \endfoot
+            
+                \bottomrule
+                \endlastfoot
+            
+                \multicolumn{4}{l}{\textbf{Failure Reason: Overconfidence}} \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Premature action without information gathering}} \\
+                \midrule
+                \hypertarget{vignette-1}{1} & Acting on historical information & 32-year-old woman with documented pregnancy 5 months prior, continuing combined oral contraception & System recommended immediate cessation, but pregnancy status required verification as patient may no longer be pregnant or may have experienced pregnancy loss \\
+                \midrule
+                \hypertarget{vignette-2}{2} & Making medication changes without understanding reason & 76 year old woman on long-term warfarin for atrial fibrillation, documented heart failure, and recent verapamil prescription (160mg three times daily) & System identified contraindication of verapamil with known heart failure and recommended immediate stop. However, understanding the original reason for verapamil prescription (rate control in AF) before changing it would be essential (consideration should be given to safer alternatives and discussion with specialist) \\
+                \midrule
+                \hypertarget{vignette-3}{3} & Discontinuing specialist medications without consultation & Patient receiving methotrexate for rheumatological disease alongside potentially interacting naproxen, flagged for NSAID-methotrexate interaction & System recommended holding methotrexate pending alcohol reduction counselling. However, methotrexate is specialist prescribing only and holding it without specialist consultation could precipitate relapse—discussion with rheumatologist essential \\
+                \midrule
+                \hypertarget{vignette-4}{4} & Non-medication pathways not in coded records & 44-year-old man with moderate-severe depression (PHQ-9 17/27) and severe anxiety (GAD-7 16/21) had sertraline prescriptions listed as not being taken & System recommended starting sertraline 50mg daily to address untreated depression and anxiety. However, the patient may be accessing psychological therapies such as talking therapy or Cognitive behaviour therapy, support from mental health teams, or other non-pharmacological interventions for mood disorder \\
+                \midrule
+                \hypertarget{vignette-5}{5} & Discontinuing specialist medications without consultation & Patient on carbamazepine for schizophrenia management with identified hyponatraemia and neutropenia & System recommended discontinuing or dose-reducing carbamazepine. However, carbamazepine may have multiple indications including seizure control or mood stabilization, and abrupt discontinuation could cause severe mental health deterioration, requiring discussion with mental health team \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Overlooked clinical issues}} \\
+                \midrule
+                \hypertarget{vignette-6}{6} & Missed anticholinergic burden & 67-year-old woman with COPD, correctly flagged for duplicate atorvastatin and propranolol use in obstructive airway disease, had anticholinergic burden score of 6 & Anticholinergic burden not mentioned or addressed by System \\
+                \midrule
+                \hypertarget{vignette-7}{7} & Missed folic acid supplementation & 70-year-old man on weekly subcutaneous methotrexate (Metoject) for rheumatoid arthritis, correctly identified as having verapamil contraindicated in systolic heart failure & Folic acid alongside methotrexate was needed, as previous folic acid not currently active at medication review. This was not suggested by the System \\
+                \midrule
+                \hypertarget{vignette-8}{8} & Inadequate electrolyte assessment & 66-year-old woman with persistent hyponatraemia (sodium 123-125 mmol/L) & System suggested no required intervention when investigation of hyponatraemia causes is needed especially in this age group, specifically paired serum and urine osmolalities, early morning cortisol, and thyroid function tests \\
+                \midrule
+                \multicolumn{4}{l}{\textbf{Failure Reason: Protocol vs Patient gap}} \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Not considering patient specific context - Palliative care and frailty}} \\
+                \midrule
+                \hypertarget{vignette-9}{9} & End-of-life care planning & 80-year-old woman with coronary heart disease, heart failure, chronic kidney disease, and documented frailty (frailty index 0.33, 69\% mortality risk) had discontinued aspirin, statin, ACE inhibitor, and beta-blocker 9 months prior & System flagged all these omissions and recommended re-initiation of all of them. While these may be correct for someone younger and physiologically robust, in this case their withdrawal represented appropriate end-of-life care planning \\
+                \midrule
+                \hypertarget{vignette-10}{10} & Palliative care priorities & 90-year-old woman with dementia, atrial fibrillation, hypertension, osteoporosis and secondary hyperparathyroidism on the palliative care register had missing calcium and vitamin D supplementation & System recommended starting calcium and vitamin D—less concerning for a patient with such advanced disease and palliation \\
+                \midrule
+                \hypertarget{vignette-11}{11} & Age-appropriate targets & 82-year-old woman with severe hypertension (systolic 192 mmHg) on amlodipine monotherapy & System flagged for uncontrolled blood pressure and recommended initiating ramipril 5mg once daily and targeting blood pressure below 140/90 mmHg. However, frailty and falls risk may outweigh the benefit of adding an additional agent, and blood pressure targets could be more relaxed in patients over 80 \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Not considering patient specific context - Complex treatment regimens}} \\
+                \midrule
+                \hypertarget{vignette-12}{12} & Competing medication indications & Patient with atrial fibrillation, heart failure, and documented hypotension on multiple antihypertensive agents including nebivolol (beta-blocker), amlodipine, furosemide, and spironolactone & System correctly identified hypotension warranted reducing antihypertensive burden and recommended discontinuing nebivolol, the lowest-dose beta-blocker. However, discontinuing the beta-blocker risked precipitating fast atrial fibrillation and hospitalization; amlodipine would be safer choice to withdraw. System's recommendation failed to acknowledge this dual indication or signal uncertainty \\
+                \midrule
+                \hypertarget{vignette-13}{13} & Nuanced risk-benefit balance & Patient with severe mental illness on flupentixol prescribed procyclidine prophylactically to prevent extrapyramidal symptoms & System flagged procyclidine as potentially inappropriate anticholinergic therapy and recommended discontinuation. However, procyclidine was used prophylactically because some features of extrapyramidal syndrome, particularly tardive dyskinesia, may be irreversible if allowed to develop, requiring shared decision-making about competing risks \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Rigid application of safety thresholds}} \\
+                \midrule
+                \hypertarget{vignette-14}{14} & Rigid threshold application & 80-year-old non-diabetic patient with blood pressure readings of 130-140/60-80 mmHg & System flagged as untreated hypertension requiring intervention when this range was acceptable for an 80-year-old non-diabetic patient \\
+                \midrule
+                \hypertarget{vignette-15}{15} & Misapplied dosing criteria & 68-year-old male with creatine 135~$\mu$mol/L on 5mg apixaban twice daily & System recommended dose reduction based on "apixaban dose exceeding renal dosing recommendation"  when guidelines require additional criteria to be met (age$>$80 or body weight $<$60kg) \\
+                \midrule
+                \hypertarget{vignette-16}{16} & Overstated interaction risk & Patient on low-dose atorvastatin-amlodipine & System flagged for myopathy risk when the interaction is only significant with simvastatin or high-dose atorvastatin \\
+                \midrule
+                \hypertarget{vignette-17}{17} & Inappropriate frailty assessment & 41-year-old woman with history of depression and anxiety on propranolol with frailty codes for falls and dizziness & System recommended discontinuation of propranolol based on frailty codes when there were no further documented concerns in the record and multiple entries noting anxiety \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Missed deprescription opportunities}} \\
+                \midrule
+                \hypertarget{vignette-18}{18} & Palliative care medication burden & 87-year-old man on palliative care register with dementia and documented falls taking simvastatin and aspirin 75mg daily & System correctly identified duplicate bisoprolol prescriptions and donepezil-bisoprolol interaction contributing to falls, but missed opportunities to question ongoing value of statin in someone on palliative care register with dementia, and to discuss whether aspirin risk was outweighing its benefit \\
+                \midrule
+                \hypertarget{vignette-19}{19} & Palliative care medication burden & 84-year-old man with vascular dementia on palliative care register taking warfarin, clopidogrel, and atorvastatin 80mg & System recommended stopping clopidogrel to reduce bleeding risk and reducing atorvastatin to 20mg for elevated liver enzymes. While stopping clopidogrel was appropriate, the statin could be stopped altogether in palliative care if the patient agreed, as risk outweighed benefit \\
+                \midrule
+                \hypertarget{vignette-20}{20} & Medication without clear indication & 75-year-old woman with rheumatoid arthritis on methotrexate taking omeprazole 20mg daily & System correctly flagged for missing folic acid supplementation, but there was no obvious indication for the omeprazole 20mg daily, which should have been flagged as potentially unnecessary \\
+                \midrule
+                \multicolumn{4}{l}{\textbf{Failure Reason: Protocol vs Practice gap}} \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Duplicate Prescription Errors}} \\
+                \midrule
+                \hypertarget{vignette-21}{21} & Multiple tablet strengths to achieve target dose & 56-year-old woman with multiple comorbidities prescribed ramipril 2.5mg and ramipril 1.25mg concurrently & System flagged as duplicate dosing creating excess exposure and recommended stopping the 1.25mg tablet. However, the intended total daily dose was 3.75mg—which cannot be achieved with a single tablet strength \\
+                \midrule
+                \hypertarget{vignette-22}{22} & Multiple tablet strengths to achieve target dose & 56-year-old woman with essential hypertension prescribed perindopril 2mg and perindopril 4mg tablets, both taken each morning, achieving a total daily dose of 6mg & System flagged as duplicate prescribing, and recommended consolidating to a single 6mg tablet. However, perindopril 6mg tablets do not exist—the intended total daily dose of 6mg requires using two tablet strengths concurrently \\
+                \midrule
+                \hypertarget{vignette-23}{23} & Tapering or transition phases misinterpreted as concurrent duplicates & 30-year-old pregnant woman had two venlafaxine prescriptions listed (Vensir XL 225mg once daily and 150mg twice daily) & System calculated a total dose of 525mg daily and recommended discontinuing both prescriptions as duplicate high-dose prescribing. However, this was part of a dose-optimisation strategy—the 225mg dose had replaced the 150mg dose rather than added to it, and the record noted that the prescriptions were not being taken concurrently \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Healthcare system context}} \\
+                \midrule
+                \hypertarget{vignette-24}{24} & Prescription records vs actual patient exposure & 84-year-old woman on warfarin prescribed flucloxacillin with explicit note to stop simvastatin during the antibiotic course & System flagged simvastatin as still active and recommended immediate discontinuation. However, the patient was clearly advised to discontinue simvastatin during antibiotic therapy—the prescription note indicated the medication was not actually being taken \\
+                \midrule
+                \hypertarget{vignette-25}{25} & Prescription records vs actual patient exposure & 95-year-old man had two ACE inhibitors listed as active prescriptions: ramipril 1.25mg daily and quinapril 5mg daily & System flagged duplicate therapy carrying high risk of hypotension and acute kidney injury. However, a free text annotation stated ramipril was only being prescribed until quinapril came back in stock due to supply shortage—the patient was never actually receiving both ACE inhibitors simultaneously \\
+                \midrule
+                \hypertarget{vignette-26}{26} & Medications managed outside primary care record & 39-year-old woman with type 1 diabetes had no insulin prescription recorded despite markedly elevated HbA1c (65-70 mmol/mol) and ongoing glucose monitoring with FreeStyle Libre sensor & System recommended initiating insulin therapy urgently to prevent diabetic ketoacidosis. However, the patient must be receiving insulin as a type 1 diabetic; her insulin supply comes from secondary care, likely via continuous insulin pump, which is not captured in the primary care medication record \\
+                \midrule
+                \multicolumn{4}{l}{\textbf{Failure Reason: Coherent but factually incorrect}} \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Hallucinations}} \\
+                \midrule
+                \hypertarget{vignette-27}{27} & Misidentified drug composition - clopidogrel & Patient prescribed Monomil XL, a brand of isosorbide mononitrate & System indicated that it contained clopidogrel and identified dual therapy. However, Monomil XL does not contain clopidogrel \\
+                \midrule
+                \hypertarget{vignette-28}{28} & Misidentified drug composition - calcium channel blocker & Patient prescribed Monomil XL, a brand of isosorbide mononitrate & System indicated that it was a calcium channel blocker and identified dual therapy. However, Monomil XL is not a calcium channel blocker \\
+                \midrule
+                \hypertarget{vignette-29}{29} & Misidentified drug composition - opioid & Patient prescribed Monomil XL, a brand of isosorbide mononitrate & System indicated that it was an opioid. However, Monomil XL is not an opioid \\
+                \midrule
+                \hypertarget{vignette-30}{30} & Misidentified drug composition - tramadol and acetaminophen & Patient prescribed Zapain & System incorrectly thought it contained tramadol and acetaminophen and made recommendations accordingly, whereas Zapain in fact contains a combination of codeine and paracetamol \\
+                \midrule
+                \hypertarget{vignette-31}{31} & Incorrect VTE risk with transdermal oestrogen & Patient prescribed estradiol 0.06\% transdermal gel for menopausal symptoms, current smoker with prior pulmonary embolism & System noted that the transdermal oestrogen might increase the risk of venous thromboembolism, referencing the fact that the patient was a current smoker with prior pulmonary embolism. Transdermal oestrogens are not associated with an increased risk of venous thromboembolism \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Pharmacological knowledge gaps}} \\
+                \midrule
+                \hypertarget{vignette-32}{32} & Topical NSAID systemic risk overestimation & 82-year-old woman with chronic kidney disease stage 3 (eGFR 50 mL/min) on furosemide and candesartan using Fenbid 5 percent gel for musculoskeletal pain & System flagged topical NSAID use in chronic kidney disease on loop diuretic and ARB as requiring intervention and recommended stopping immediately due to risk of acute kidney injury. However, systemic absorption of NSAID gels is much below the threshold where systemic side effects might be expected \\
+                \midrule
+                \hypertarget{vignette-33}{33} & Topical NSAID systemic risk overestimation & 87-year-old woman with peptic ulcer disease using Fenbid 10 percent gel & System flagged NSAID use despite having a current peptic ulcer—the System also flagged oral naproxen in this patient, but failed to distinguish which posed the actual risk. However, systemic absorption of NSAID gels is much below the threshold where systemic side effects might be expected \\
+                \midrule
+                \hypertarget{vignette-34}{34} & Illogical intervention sequence & 54-year-old man with peptic ulcer history taking ibuprofen 200mg three times daily & System correctly flagged for NSAID use in ulcer-prone patient. The System recommended discontinuing ibuprofen immediately, prescribing paracetamol for analgesia, and simultaneously starting omeprazole 20mg daily for ulcer protection. However, stopping the ibuprofen and starting a gastro-protective agent at the same time is illogical—stopping the NSAID removes the risk factor so PPI is not required \\
+                \midrule
+                \hypertarget{vignette-35}{35} & Misidentified therapeutic purpose & 85-year-old man with falls and hypotension taking losartan, amlodipine, and tamsulosin & System recommended discontinuing tamsulosin to reduce orthostatic hypotension from "triple anti-hypertensive therapy." However, tamsulosin is used for prostate-related urinary symptoms, not blood pressure control—any review should focus on urinary symptom management and whether safer alternatives exist for patients with falls risk \\
+                \midrule
+                \multicolumn{4}{l}{\textit{Guidelines misapplication}} \\
+                \midrule
+                \hypertarget{vignette-36}{36} & Incorrect statin threshold & 58-year-old woman with ischaemic heart disease and a QRISK2 10-year CVD risk of 7.8\% with persistently elevated blood pressure but not on statin therapy & System recommended initiating atorvastatin 20mg daily for established cardiovascular disease, although without referencing guidelines. However, the threshold for statin therapy is greater than 10\% QRISK over 10 years, above the patient's current level \\
+                \midrule
+                \hypertarget{vignette-37}{37} & Misunderstood BP measurement guidelines & 67-year-old man with clinic blood pressure of 140/90 mmHg recorded 1 year 7 months prior but home readings of 124/76 mmHg & System flagged uncontrolled hypertension with no antihypertensive therapy and recommended starting ramipril 2.5mg daily. However, UK guidelines state home readings are more accurate than clinic measurements, and treatment would not be recommended on the basis of these readings \\
+                \midrule
+                \hypertarget{vignette-38}{38} & Incorrect maximum dose & 49-year-old man taking citalopram 30mg daily (1.5 tablets of 20mg) & System flagged for exceeding the age-appropriate maximum dose, stating ``Citalopram dose exceeds age-appropriate maximum (30mg daily $>$ 20mg recommended for $>$45yr)". However, the maximum dose is 40mg daily, making the current 30mg dose appropriate \\
+                \midrule
+                \hypertarget{vignette-39}{39} & Intervention not supported by guidelines & 54-year-old man with diabetes who experienced a first unprovoked epileptic seizure 9 months prior with no antiepileptic medication prescribed & System flagged this as an issue requiring intervention. However, epilepsy guidelines and ILAE guidelines advise treatment is not necessary after first seizure unless considered high risk (greater than 60 percent) of recurrence according to NICE NG217, and the seizure was possibly due to low blood sugar which would not be classified as epileptiform \\
+                \midrule
+                \multicolumn{4}{l}{\textbf{Failure Reason: Process blindness}} \\
+                \midrule
+                \hypertarget{vignette-40}{40} & Unsafe medication transitions without risk assessment & 83-year-old frail patient with atrial fibrillation and no current anticoagulation & System advised to start apixaban. However, this was too aggressive without first calculating bleeding risk (HAS-BLED score) and making a shared decision with the patient about risks versus benefits \\
+                \midrule
+                \hypertarget{vignette-41}{41} & Unsafe medication transitions without confirming diagnosis & Patient with elevated clinic blood pressure readings & System instructed to start ramipril, when NICE guidelines require home or ambulatory monitoring to confirm the diagnosis of hypertension before initiating treatment \\
+                \midrule
+                \hypertarget{vignette-42}{42} & Immediate discontinuation requiring gradual tapering & 76-year-old woman with cognitive impairment and constipation taking amitriptyline 10mg nightly & System identified the high anticholinergic burden and recommended stopping amitriptyline immediately and initiating a safer alternative such as sertraline. However, while ultimately discontinuation of amitriptyline was appropriate, it requires tapering over several weeks \\
+                \midrule
+                \hypertarget{vignette-43}{43} & Immediate discontinuation requiring gradual tapering & 54-year-old woman on both sertraline 100mg daily and duloxetine 60mg nightly & System flagged for serotonin syndrome risk and suggested immediate discontinuation of duloxetine—tapering would be required instead \\
+                \midrule
+                \hypertarget{vignette-44}{44} & Discontinuing therapy without ensuring alternative management & 27-year-old woman with severe obesity (BMI 46.5 kg/m²) taking combined oral contraceptive (Rigevidon) & System identified the reduced effectiveness due to high BMI and recommended discontinuing Rigevidon then subsequently discussing alternative contraceptive methods. However, stopping the contraceptive pill before organizing an alternative would increase pregnancy risk rather than reduce it—a discussion was necessary before any changes to the patient's contraception \\
+                \midrule
+                \hypertarget{vignette-45}{45} & Discontinuing therapy without ensuring alternative management & Patient with type 2 diabetes, advanced CKD (eGFR 30 mL/min), and poor glycemic control (HbA1c 77 mmol/mol) on metformin 500mg three times daily & System recommended stopping metformin without suggesting an alternative glucose-lowering agent. However, simply discontinuing metformin would worsen the already poor glycemic control and accelerate renal decline—an alternative agent was necessary \\
+                \midrule
+            \end{longtable}
+            }

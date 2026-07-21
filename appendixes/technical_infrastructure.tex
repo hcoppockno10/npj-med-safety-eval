@@ -1,0 +1,31 @@
+\label{app:technical-infrastructure}
+\subsection{Computing Infrastructure}
+
+    The Trusted Research Environment (TRE) included two Azure virtual machines with a shared filesystem. The CPU node was an Azure Standard E48as v6 instance. A secondary GPU node with two NVIDIA H100 GPUs enabled local hosting of large language models (LLMs) with vLLM. This setup enabled processing of the full dataset (2,125,549 patients) within the TRE while also enabling use of leading open source LLMs.
+    
+
+
+\subsection{Data Preprocessing}
+    The TRE provided access to historical patient profiles via an export of parquet files. Substantial data preprocessing was required to construct longitudinal patient profiles from multiple linked tables. The preprocessing pipeline is documented in this \href{https://github.com/i-dot-ai/medguard-preprocessing/tree/paper-analysis}{repository}. The preprocessing generated structured patient profiles as Pydantic models (seen \href{https://github.com/i-dot-ai/medguard-paper/blob/main/medguard-preprocessing/src/medguard/models.py}{here}) containing all available information for a patient. These were then transferred to the GPU for analysis.
+
+    These structured patient profiles had methods to convert them to markdown containing chronologically ordered clinical events: demographics, diagnoses (SNOMED-coded with descriptions), medications (with start/end dates and whether they were active or past prescriptions at the time of the review), laboratory results, hospital episodes, and relevant clinical observations (including height, weight, blood pressure).
+
+    For each patient the System generated structured outputs following the schema detailed in Table~\ref{tab:pydantic}. 
+
+    \begin{table}[ht]
+    
+        \centering
+        \begin{tabular}{@{}llp{7cm}@{}}
+        \toprule
+        \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+        \midrule
+        Intervention required & Boolean & Binary flag indicating whether any action needed \\
+        Intervention probability & Float (0-1) & Model confidence in intervention necessity \\
+        Clinical issues & List & Identified medication safety concerns \\
+        Evidence & List & Supporting clinical data for each issue \\
+        Proposed interventions & String & Recommended intervention for patient \\
+        \bottomrule
+        \end{tabular}
+        \caption{Structured output schema for System evaluations}
+    \label{tab:pydantic}
+    \end{table}

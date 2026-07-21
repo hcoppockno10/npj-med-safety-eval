@@ -1,0 +1,32 @@
+\label{app:population-performance-assessment}
+
+        The primary evaluation employed stratified sampling (100 indicator-positive + 100 complexity-matched indicator-negative + 100 random indicator-negative) to ensure sufficient representation for detailed failure mode analysis. However, this 50:50 design does not reflect true population distribution, limiting generalisability of raw performance metrics.
+
+        To estimate unbiased population-level performance, we consider the subset of 100 random indicator-negative patients. After data quality filtering, 95 patients remained evaluable.
+
+        The System's flagging rate in this unselected population establishes the base rate for deployment. We measured performance within two strata: System-flagged patients and System-not-flagged patients. To extrapolate to population-level estimates, we calculated stratum-specific performance rates (positive predictive value among flagged; negative predictive value among not-flagged) and re-weighted by the observed population flagging rate. This stratified re-weighting approach yields unbiased population-level sensitivity, specificity, and predictive values that account for the true distribution of System activation in clinical practice.
+    
+        Among the 51 System-flagged patients, clinician review confirmed clinical issues requiring intervention in 46 cases (90.2\% positive predictive value) with 5 false positives (9.8\%). Among the 44 patients the System did not flag, clinician review found 44 true negatives and 0 false negatives (100\% negative predictive value in this stratum; Table~\ref{tab:performance}).
+
+        To extrapolate from the evaluated sample to the broader population, we calculated performance rates within each stratum (flagged vs not-flagged) and reweighted by the observed population flagging rate (46.3\% flagged, 53.6\% not-flagged). This stratified reweighting approach accounts for the true distribution of System activation in clinical practice and yields unbiased population-level estimates.
+
+        \begin{table}[h]
+            \centering
+
+            \begin{tabular}{lc}
+            \toprule
+            \textbf{Metric} & \textbf{Value} \\
+            \midrule
+            Population prevalence & 41.5\% \\
+            Sensitivity & 100\% \\
+            Specificity & 92.3\% \\
+            Positive Predictive Value & 90.2\% \\
+            Negative Predictive Value & 100\% \\
+            Overall Accuracy & 95.5\% \\
+            Cohen's $\kappa$ & 0.909 \\
+            F1 Score & 0.948 \\
+            \bottomrule
+            \end{tabular}
+            \caption{Population-level performance estimates}
+            \label{tab:performance}
+        \end{table}

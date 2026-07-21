@@ -1,0 +1,1 @@
+END { system('cp', 'output.bbl', 'main_nature_medicine.bbl'); }

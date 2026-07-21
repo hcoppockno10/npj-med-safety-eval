@@ -1,0 +1,87 @@
+\subsection{Study Design and Setting}
+
+    This study was a cross-sectional evaluation using electronic health records (EHR) data from the NHS Cheshire and Merseyside Integrated Care Board. It was conducted within a Trusted Research Environment (TRE) provided by GraphNet Ltd. The study received approval from the Data Access and Asset Group following completion of data protection impact assessment, with access granted from June 8th to November 8th 2025.
+
+\subsection{Data Source and Population}
+    The dataset comprised 2,125,549 unique adults aged 18 and over with linked GP events, medications, hospital episodes, and coded observations using SNOMED CT and dm+d coding systems. From this EHR data, we constructed structured \textit{patient profiles} --- longitudinal records containing all available clinical information for each patient. These patient profiles contained only coded information; no free-text clinical notes were available in the EHR export.
+
+    Among patients with at least one recorded GP event (98.8\%), the mean number of events per patient was 1,010 (median 666, range 1-31,438, SD 1,126). Dates ranged from 1976 to 2025, with the interquartile range spanning 2012 to 2022. The population was more deprived than the national average: the Index of Multiple Deprivation (IMD) distribution showed 26.6\% of patients in England's most deprived decile compared with 7.7\% in the least deprived decile.
+
+\subsection{System Architecture}
+    \label{sec:system-architecture}
+    We evaluated \texttt{gpt-oss-120b}, a 120-billion parameter model released in August 2025 by OpenAI, using the Inspect evaluation framework~\cite{ukaisecurity2024inspectai}. This LLM-based medication safety review configuration is referred to throughout as ``the System". The system prompt specified the task (identify medication safety issues requiring intervention), described the input format, and defined the expected output structure. It avoided specific methodological frameworks or examples. The complete system prompt is provided in Appendix~\ref{app:system-prompt}. The System operated without external knowledge sources such as  the BNF, NICE Guidelines, or PubMed. Each patient profile was converted to chronologically ordered markdown. The System generated structured outputs including binary intervention flag, probability score, identified issues with evidence, and proposed interventions.
+
+\subsection{Case Sampling Strategy}
+
+    The evaluation considered patients across a spectrum of clinical complexity, defined by age, comorbidity burden (count QoF registers belonged to), number of active medications, and frequency of recent GP events. From a 200,000 patient test set, we selected 300 patients for expert review. Three sampling strategies were employed to achieve this coverage.
+
+    Firstly, prescribing safety indicators (detailed in Appendix \ref{app:prescribing-safety-indicators}) were used to identify high-complexity cases with medication safety concerns. From the 8,326 patients meeting at least one indicator in the 200,000 patient test set, 100 patients were randomly sampled with stratification across all 10 indicators to ensure diverse representation.
+
+    In addition, 100 indicator-negative patients were selected using stratified matching on age, sex, number of active prescriptions, and GP events since 2020. These cases exhibited similar baseline clinical complexity to positive cases.
+
+    To better understand System performance in less complex clinical scenarios and enable extrapolation to population level performance, an additional 100 patients were sampled from the indicator-negative population. The System was first applied to a larger indicator-negative sample, then 50 System-positive cases (flagged for intervention) and 50 System-negative cases (no intervention flagged) were randomly selected for clinician review.
+
+    This combined sampling approach yielded 300 patients. After excluding 23 cases with data quality issues, 277 patients remained for analysis. 
+    
+    Given the role of prescribing safety indicators in case sampling, we separately analysed System performance against these criteria and clinician-indicator agreement rates; results are provided in Appendix~\ref{app:prescribing-safety-indicators}. Likewise, the subset of randomly sampled indicator-negative patients enables extrapolation to population-level performance estimates; results are provided in Appendix~\ref{app:population-performance-assessment}.
+
+\subsection{Clinician evaluation of patients}
+
+    All analysed cases underwent independent review by an experienced clinician with expertise in medication optimisation and safety. This clinician-evaluated design followed preliminary analysis demonstrating that ground truth cannot be reliably established from coded EHR data alone: medication change rates were nearly identical between structured medication reviews coded as identifying issues versus those coded as finding none (30.8\% vs 30.2\% within three months).
+    
+    The clinician was tasked purely with System evaluation and had no part in System development. They were provided access to patient profiles via a custom-built evaluation interface hosted locally within the TRE, which displayed the same information as the System. The interface displayed patient profiles chronologically and allowed systematic assessment across multiple dimensions. Examples of the evaluation interface are provided in Appendix~\ref{app:evaluation-app}. For each patient the clinician evaluated:
+
+    \begin{enumerate}[nosep]
+        \item For each issue identified by the System, whether this was correct or not
+        \item Whether the System missed any other issues
+        \item For the intervention proposed by the System, whether this was correct or not
+    \end{enumerate}
+    
+    \noindent
+    The test cases were reviewed between October and November 2025.
+
+\subsection{Three-Level Hierarchical Evaluation Framework}
+
+    Binary classification (patient has an issue: yes/no) provides insufficient granularity to understand where and why medication safety systems fail. We use a hierarchical evaluation to record System performance at three levels, all marked by the clinician.
+
+    Similar multi-level frameworks have recently been proposed for diagnostic reasoning evaluation, where performance degradation across stages reveals reasoning brittleness invisible to single-metric assessment~\cite{Qiu2025}. 
+
+    \textbf{Level 1: Issue Identification.} Did the System correctly flag any issue in the patient where one was present? This is marked by the clinician during their review.
+
+    \textbf{Level 2: Issue Correctness (conditional on Level 1).} Among cases where the System flagged an issue, did it identify the correct issues? Cases failing Level 1 (not flagged) do not progress to Level 2 evaluation.
+
+    \textbf{Level 3: Intervention Appropriateness (conditional on Level 2).} Among cases where the System correctly identified all the issues, did it propose a correct intervention? Cases failing Level 2 (wrong issue identified) do not progress to Level 3 evaluation.
+
+
+\subsection{Failure Mode Analysis}
+    To characterise System failure modes, we reviewed all System analyses exhibiting errors at any hierarchical level. Individual cases could exhibit multiple failure patterns. Themes were developed iteratively. Through this process, a natural distinction emerged between \textit{failure reasons}---the underlying causes explaining why the System failed---and \textit{failure modes}---the specific observable manifestations of how failures presented.
+
+    Where a single patient exhibited multiple distinct failure patterns, each was coded separately, yielding 178 failure instances from 148 patients. The resulting five-category taxonomy (Figure~\ref{fig:figure2}) extends prior frameworks for medical AI failure analysis~\cite{kim2025medicalhallucinationsfoundationmodels, asgari_framework_2025} to the medication safety domain. Representative vignettes illustrating each failure mode are provided in Appendix~\ref{app:failure-vignettes}.
+
+    To assess the potential clinical significance of System failures, each failure instance was independently classified by an experienced clinician according to the WHO International Classification for Patient Safety harm categories~\cite{Cooper2018WHOClassification}, adapted to assess likely outcome if the System's recommendation were implemented without further review. Categories ranged from none (no symptoms, no treatment required) through mild, moderate, and severe to death.
+
+
+\subsection{Performance by Patient Complexity}
+    We assessed performance stratified by patient age, number of active medications, and QoF register membership count (proxy for co-morbidity burden). Given potential confounding between these measures, we assessed their intercorrelation using Pearson coefficients and performed multiple regression to identify independent predictors of performance.
+
+    The clinician did not provide an overall score for each patient. Instead, a composite score ($S_{\text{clinician}}$, range 0--1) was calculated from individual assessments, combining issue identification (as an $F_1$ score) and intervention appropriateness (full/partial/no credit). The scoring methodology assigns partial credit (0.5) for partially correct outputs, reflecting clinical judgment that these retain some utility while being clearly distinguished from fully correct assessments. Full specification is provided in Appendix~\ref{app:scoring}.
+
+\subsection{Automated Scoring}
+
+    The methods so far relied on clinician evaluation of all 277 cases. Further insight relied on quantitative metrics across multiple models, complexity strata and repeated runs, which is not feasible manually.
+
+    We developed an automated scorer using the clinician's feedback on the 277 patients as ground truth. Clinician assessments were synthesised by \texttt{gpt-oss-120b} into lists of clinical issues and interventions. A separate LLM judge then assessed alignment between System outputs and this ground truth, producing an automated score ($S_{\text{automated}}$, range 0--1) combining $F_1$ scores for issue identification and intervention appropriateness. True negatives (both system and ground truth agree no issues exist) score 1.0; disagreements on issue presence score 0.0. Full specification is provided in Appendix~\ref{app:scoring}.
+
+    $S_{\text{automated}}$ was used to assess model self-consistency, compare performance across models, and evaluate variation with stated patient ethnicity. Alternative scoring methods that weight false negatives more heavily than false positives could better reflect the asymmetric harm from missing genuine risks in any deployment.
+
+    \subsubsection{Self-Consistency and Anchoring Bias Assessment}
+    \label{sec:self-consistency}
+        To quantify anchoring bias in clinician evaluation, we calculated the System's inherent accuracy ceiling from self-consistency data. From 10 repeated runs per patient, we measured: $P(\text{re-flag } | \text{ initially flagged})$ and $P(\text{maintain negative } | \text{ initially negative})$. Applying these probabilities to the 277 evaluable patients yields expected true positives and true negatives based solely on model behaviour. The difference between this model self-consistency ceiling and observed clinician-agreement accuracy (95.7\%) represents the minimum anchoring effect. 
+
+    \subsubsection{Multi-Model Comparison}
+        To assess whether performance patterns were model-specific or generalisable, the System was evaluated using six model configurations spanning four distinct foundation models: \href{https://huggingface.co/openai/gpt-oss-120b}{\texttt{gpt-oss-120b}} with three reasoning effort configurations (low, medium, high), \href{https://huggingface.co/openai/gpt-oss-20b}{\texttt{gpt-oss-20b}} (medium reasoning), \href{https://huggingface.co/google/gemma-3-27b-it}{\texttt{gemma-3-27b-it}}, and \href{https://huggingface.co/google/medgemma-27b-text-it}{\texttt{medgemma-27b-text-it}}. Inspect enabled identical evaluation pipelines across all models without code modification~\cite{ukaisecurity2024inspectai}.
+
+        Each model was evaluated with 10 independent repeats over the test set to characterise both mean performance and run-to-run variability. This approach provided confidence intervals for performance metrics and identified cases exhibiting high output variability across runs.
+
+    \subsubsection{Variation with Ethnicity}
+        To assess whether stated patient ethnicity influenced System recommendations, we conducted a counterfactual evaluation. For each patient in the test set, we created three variants by inserting a single line into the patient profile stating ethnicity as White, Asian, or Black respectively. All other clinical information remained identical. Each patient-ethnicity combination was evaluated across 3 independent epochs using the same primary System (\texttt{gpt-oss-120b-medium} reasoning effort).

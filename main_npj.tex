@@ -1,0 +1,218 @@
+\documentclass[12pt]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage[toc,page]{appendix}
+\usepackage[breakable, skins, listings]{tcolorbox}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{lineno}
+%TC:incbib
+
+\title{A Real-World Evaluation of LLM Medication Safety Reviews in NHS Primary Care}
+
+
+\author{%
+  \parbox{\textwidth}{\centering \small
+    Oliver Normand\textsuperscript{1},
+    Esther Borsi\textsuperscript{1},
+    Mitch Fruin\textsuperscript{1},
+    Lauren E Walker\textsuperscript{2,3},
+    Jamie Heagerty\textsuperscript{4},
+    Chris C. Holmes\textsuperscript{5,6},
+    Anthony J Avery\textsuperscript{7},
+    Iain E Buchan\textsuperscript{3},
+    Harry Coppock\textsuperscript{1,4,8,9} \thanks{Corresponding author: harry.coppock@dsit.gov.uk}\\[0.75em]
+    \textsuperscript{1}The Incubator for Artificial Intelligence, Department for Science Innovation and Technology, London, UK\\
+    \textsuperscript{2}Centre for Experimental Therapeutics, University of Liverpool, Liverpool, UK\\
+    \textsuperscript{3}Civic Health Innovation Labs, University of Liverpool, Liverpool, UK\\
+    \textsuperscript{4}10 Downing Street, London, UK\\
+    \textsuperscript{5}Nuffield Department of Medicine, and Department of Statistics, University of Oxford, Oxford, UK\\
+    \textsuperscript{6}Ellison Institute of Technology, Oxford, UK\\
+    \textsuperscript{7}Centre for Academic Primary Care, University of Nottingham, Nottingham, UK\\
+    \textsuperscript{8}The UK AI Security Institute, London, UK\\
+    \textsuperscript{9}Department of Computing, Imperial College London, London, UK\\
+  }%
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle 
+\vspace{-1cm}
+% \linenumbers
+%TC:ignore
+\begin{abstract}
+    \input{abstract_npj.tex}
+
+\end{abstract}
+%TC:endignore
+% \clearpage
+
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tabular}{@{}c@{}}
+        % Row 1: Panel (a) - full width workflow diagram
+        \begin{minipage}{\textwidth}
+            \textbf{a}\\[2pt]
+            \includegraphics[clip, trim=0cm 6.5cm 0cm 6.5cm, width=\textwidth]{figures/figure_1a.pdf}
+        \end{minipage}\\[16pt]
+    
+        % Row 2: Panel (b) ~42%, Panel (c) ~56%
+        \begin{minipage}[t]{0.42\textwidth}
+            \textbf{b}\\[2pt]
+            \includegraphics[width=\textwidth]{figures/figure_1b.pdf}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.56\textwidth}
+            \textbf{c}\\[2pt]
+            \includegraphics[width=\textwidth]{figures/figure_1c.pdf}
+        \end{minipage}\\[16pt]
+    
+        % Row 3: Panel (d) ~38%, Panel (e) ~60%
+        \begin{minipage}[t]{0.38\textwidth}
+            \textbf{d}\\[2pt]
+            \includegraphics[width=\textwidth]{figures/figure_1d.pdf}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.60\textwidth}
+            \textbf{e}\\[2pt]
+            \includegraphics[width=\textwidth]{figures/figure_1e.pdf}
+        \end{minipage}
+    \end{tabular}
+    \caption{\textbf{Evaluation framework and primary findings.} \textbf{(a)} Evaluation workflow: patient profiles are processed by the System; a clinician reviews outputs marking issues and interventions as correct (\textcolor{green}{\checkmark}), partially correct (\textcolor{orange}{$\approx$}), or incorrect (\textcolor{red}{\texttimes}). \textbf{(b)} Hierarchical performance across 277 patients at three stages: binary classification (Level 1), issue correctness (Level 2), and intervention appropriateness (Level 3). \textbf{(c)} Distribution of 178 failure instances by failure reason and evaluation stage. \textbf{(d)} Correlation matrix showing patient complexity variables (age, medication count, QoF registers) and their relationship to clinician scores. \textbf{(e)} Model performance comparison across six configurations.}
+    \label{fig:figure1}
+\end{figure}
+
+\noindent
+Large Language Models (LLMs) are rapidly surpassing human expert performance in many domains~\cite{Kwa2025Measuring}, including aspects of healthcare~\cite{Arora2025HealthBench,Tu2025AMIE, Korom2025, bedi2025medhelmholisticevaluationlarge, Chen2025GPT4}. This has raised hopes that LLMs could help address the medication safety crisis. The World Health Organization (WHO) estimates medication errors account for approximately 1\% of global health expenditure and that preventable medication-related harm (\textgreater25\% severe or life-threatening) affects around 5\% of patients~\cite{WHO_MedicationWithoutHarm,WHO_2017_MedicationErrorCost,Panagioti2024GlobalBurdenPreventableMedHarm}. Medication-related problems represent about half of avoidable medical harm~\cite{Hodkinson2020PreventableMedicationHarm}, and advanced economies are no exception~\cite{Osanlou2022ADRMultimorbidityPolypharmacy}.
+
+Work in 2025 has shown meaningful progress toward clinician-level medical reasoning in LLMs~\cite{Tu2025AMIE,Arora2025HealthBench, Chen2025GPT4}. Yet, despite accelerating LLM adoption in healthcare~\cite{elsevier_clinician_future_2025}, recent systematic reviews reveal critical gaps in the evidence base, with only 5\% of studies using real patient data; the vast majority rely on synthetic patient data or medical-exam-style questions~\cite{suhana2025, ong2025scoping}, and only a small fraction of these studies report on failure mechanisms~\cite{asgari_framework_2025}. Motivated by this endemic \textit{evaluation gap}, this study assesses state-of-the-art LLMs tasked with conducting medication reviews for complex, real-world primary care cases and provides a detailed characterisation of how these systems fail.
+
+% paragraph on setup + methods
+Specifically, we evaluated an LLM–based medication safety system (“System”) using primary care electronic health records for 2,125,549 adults in the NHS Cheshire and Merseyside region, accessed within a Trusted Research Environment (see Appendix~\ref{app:technical-infrastructure} for technical infrastructure and data processing). Structured longitudinal patient profiles were generated from GP events, prescriptions, hospital episodes and observations, and the primary System (\texttt{gpt-oss-120b}~\cite{gpt-oss}) was prompted to flag medication safety issues and propose interventions without external knowledge sources (see Appendix~\ref{sec:system-architecture} for full architectural details). A total of 300 patients were selected across a spectrum of clinical complexity using prescribing safety indicators and matched indicator negative controls; System interventions for 277 cases with adequate data were independently reviewed by an experienced clinician, generating a hierarchical score and comprehensive failure characterisation. This is shown in Figure ~\ref{fig:figure1}a. A complete methodology can be found in Appendix~\ref{sec:methods}.
+
+%now merged discussion + results
+Figure~\ref{fig:figure1}b summarises our primary findings. The System showed excellent performance in the initial task of detecting whether a clinical issue was present (accuracy 95.7\% [95\% CI 92.6--97.5; Wilson score], sensitivity 100\% [95\% CI 98.2--100], specificity 83.1\% [95\% CI 72.7--90.1], positive predictive value 94.5\% [95\% CI 90.6--96.8], negative predictive value 100\% [95\% CI 93.9--100]). However, it correctly identified all issues and interventions in only 46.9\% [95\% CI 41.1--52.8] of patients. We observed no cases in which all identified issues were incorrect, and among partially correct cases the precision distribution was left-skewed towards higher values, with a median precision of 60\% and only 8.8\% of cases below 40\%. These findings highlight a gap between detecting that something is wrong and consistently determining what to do about it.
+
+
+
+% brief note on self consistency
+Given the non-blinded evaluation methodology, self-consistency analysis provides an alternative performance ceiling: across repeated runs on identical patient profiles, the System was 87.8\% self-consistent at binary classification. See Appendix \ref{sec:self_consistency} for a detailed analysis.
+
+% perf with patient complexity
+Figure~\ref{fig:figure1}d shows that System performance declined with increasing patient-complexity construct captured by age, medication count, and Quality and Outcomes Framework (QoF) condition registration count, each of which correlated negatively with clinician scores ($S_{\text{clinician}}$ $\in [0,1]$, combining issue identification accuracy (F1) and intervention appropriateness with full/partial/no credit; see Appendix \ref{sec:scoring-clinician}); for example, patients on $\geq 15$ medications saw a 22\% relative decline in System performance compared to those on 0--4 medications. These three measures were strongly intercorrelated. Counterfactual analysis found no performance variation across White, Asian and Black patients with similar mean scores (White 0.472 $\pm$ 0.013, Asian 0.474 $\pm$ 0.013, Black 0.471 $\pm$ 0.013) and no statistically significant variation by calendar date.
+
+% model comparison
+Figure~\ref{fig:figure1}e shows that performance varied with reasoning effort, model scale, and medical domain fine-tuning: \texttt{gpt-oss-120b-medium} achieved the best overall score (0.459 $\pm$ 0.017), outperforming its low- and high-effort counterparts (0.426--0.435) and the smaller \texttt{gpt-oss-20b-medium} (0.334, a 37.4\% relative decrease). Gemma-based models performed substantially worse despite similar parameter counts, with medical fine-tuning improving \texttt{gemma-3-27b} (0.196) to \texttt{medgemma-27b} (0.239) yet still leaving both behind even \texttt{gpt-oss-20b}, suggesting that, for this real-world medication review task, within-architecture scale and general reasoning capacity matter more than domain-specific medical fine-tuning, which may boost performance on synthetic benchmarks but appears insufficient to close the gap in complex real-world cases. Medium reasoning effort also provided the best precision--recall balance (precision 0.689, recall 0.573), with high effort producing more false positives (precision and recall 0.616), consistent with recent work showing that extending test-time reasoning can make models more vulnerable to distractors and spurious patterns, effectively `overthinking' and talking themselves out of initially correct answers~\cite{gema2025inversescalingtesttimecompute}.
+
+% failure analysis
+\begin{figure}[h!]
+    \centering
+    \makebox[\textwidth][c]{%
+        \includegraphics[clip, trim=14cm 4.5cm 14cm 0.5cm, width=1.1\textwidth]{figures/figure_2_v2.pdf}%
+    }
+    \caption{\textbf{Taxonomy and examples of System failures.} Classification of 178 failure instances across 148 patients into five failure reasons and their corresponding failure modes. Representative vignettes for each failure type showing the clinical scenario, System output, and clinician assessment. Ticks indicate correct identifications; crosses indicate errors. A full set of vignettes can be found in Appendix \ref{app:failure-vignettes}, Table \ref{tab:overconfidence-examples}.}
+    \label{fig:figure2}
+\end{figure}
+
+The failure analysis reveals an inversion of typical assumptions about LLM limitations. Across 148 patients with identified failures, we observed 178 distinct failure instances (Figure~\ref{fig:figure1}c; Figure~\ref{fig:figure2}). Factual errors---hallucinations, pharmacological knowledge gaps, and guideline misapplication---accounted for only 25 instances (14\%). The remaining 153 instances (86\%) reflected contextual reasoning failures: overconfidence prompting premature action (n=51), failure to adjust protocols for individual patient context (n=49), misunderstanding healthcare delivery practices (n=30), and process blindness leading to unsafe intervention sequences (n=23). This aligns with findings that 64-72\% of medical hallucinations stem from reasoning failures rather than knowledge gaps~\cite{kim2025medicalhallucinationsfoundationmodels}, and that LLMs can be poorly calibrated in their internal assessment of uncertainty~\cite{Pawitan2025Confidence}. Table \ref{tab:overconfidence-examples} presents 45 canonical, pseudonymised patient vignettes illustrating each failure mode, with patient context, system recommendations, and clinician commentary.
+
+\hyperlink{vignette-4}{Vignette 4} provides an example of overconfidence - recommending initiating sertraline without determining whether other antidepressant therapies were already in place. Similar failures occurred when acting on historical information without verifying currency, or discontinuing specialist-initiated medications without recognising the need for specialist consultation.
+
+The Protocol vs patient gap is illustrated in \hyperlink{vignette-9}{Vignette 9} where the System applies standardised guidelines to restart multiple prescriptions without considering the needs of this elderly patient. This pattern was frequent for patients on the palliative care register or for younger patients with complex profiles who would have benefited from more nuanced recommendations. 
+
+The protocol-practice gap manifested in two ways. \hyperlink{vignette-22}{Vignette 22} shows failure to understand that dual prescriptions are a deliberate strategy to achieve a targeted dose. The System also lacked implicit knowledge about UK healthcare delivery, such as the possibility of stock issues or treatment occurring in secondary care.
+
+Factual errors \hyperlink{vignette-27}{(Vignette 27)} were comparatively rare. In five instances the System hallucinated drug compositions - three involved misidentifying Monomil XL, a brand of isosorbide mononitrate, as a clopidogrel, a calcium channel blocker, or an opioid. Pharmacological knowledge gaps included incorrectly treating topical NSAIDs as equivalent to oral formulations. In 11 patients the System applied thresholds which contradicted UK guidelines.
+
+\hyperlink{vignette-42}{Vignette 42} exemplifies process blindness: the System identified correct clinical endpoints but recommended unsafe pathways to reach them. This included recommending immediate cessation of medications requiring gradual tapering, and discontinuing therapies for valid safety reasons without providing alternative management.
+
+Classification of potential harm using WHO patient safety categories indicated most failures would not cause significant harm if implemented: 48.3\% no harm, 43.5\% mild, 7.5\% moderate, and one case \hyperlink{vignette-2}{(Vignette 2)} severe.
+
+%limitations
+Our design involved deliberate trade-offs: we prioritised sample size over blinded multi-expert review, introducing anchoring bias; the prompt instructed decisive action to avoid uniformly passive responses (i.e., only instructing patients to seek medical advice), potentially contributing to overconfidence failures; and single-pass inference precluded information-gathering that agentic tool calling might enable. Resource constraints—limited time before data access expiry, computational limits within the secure data-analytic environment, and restricted clinician access—prevented further iterative refinement. The study used structured electronic health record data from a single NHS region, lacking free-text notes and complete secondary care records.
+
+%conclusion
+This study provides the first systematic characterisation of how LLMs fail in real-world medication safety review. Despite strong binary classification (100\% sensitivity, 83.1\% specificity), the System produced fully correct outputs in less than half of cases, revealing a gap between detecting something is wrong and understanding what to do about it. The failure taxonomy - with contextual reasoning errors outnumbering factual errors 6:1 - challenges predominant approaches focused on knowledge augmentation through Retrieval-Augmented Generation and medical fine-tuning. Addressing these failures will require better calibration of uncertainty, agentic architectures that can request further information, and training that captures implicit healthcare delivery knowledge.
+\\[0.75em]
+\textbf{Code availability.} \url{https://github.com/i-dot-ai/medguard-paper}
+        
+% \clearpage
+
+\bibliography{references}
+\bibliographystyle{naturemag}
+% \printbibliography
+%TC:ignore
+\clearpage
+
+
+
+\clearpage
+\begin{appendices}
+These appendices provide: a comprehensive methodology (\ref{sec:methods}) and scoring methodology specifications (\ref{app:scoring}), detailed failure vignettes (\ref{app:failure-vignettes}), system prompt (\ref{app:system-prompt}), prescribing safety indicator methods and supplementary analyses (\ref{app:prescribing-safety-indicators}), population-level performance extrapolation (\ref{app:population-performance-assessment}), technical infrastructure details (\ref{app:technical-infrastructure}), evaluation interface documentation (\ref{app:evaluation-app}) and declarations (\ref{sec:declaration}).
+
+
+
+
+
+\section{Methods}
+\label{sec:methods}
+\input{sections/methods}
+
+\section{Scoring Methodology}
+\input{appendixes/scoring-methodology}
+
+\section{Failure Vignettes}
+\input{appendixes/failure-vignettes}
+
+\clearpage
+
+
+\clearpage
+\section{System Prompt}
+\input{appendixes/system_prompt}
+
+\clearpage
+\section{Evaluation App}
+\input{appendixes/evaluation-app}
+
+\clearpage
+\section{Self-Consistency and Anchoring Bias Assessment}
+\label{sec:self_consistency}
+\input{sections/self-consistency-anchoring-bias}
+
+\clearpage
+\section{Technical Infrastructure and Data Processing}
+\input{appendixes/technical_infrastructure}
+
+\clearpage
+\section{Prescribing Safety Indicators: Methods and Supplementary Results}
+\input{appendixes/prescribing_safety_indicators}
+
+\clearpage
+\section{Population Performance Assessment}
+\input{appendixes/population_level_performance}
+
+\section{Declarations}
+\label{sec:declaration}
+\input{appendixes/declarations}
+
+
+\end{appendices}
+%TC:endignore
+
+\end{document}
